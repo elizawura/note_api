@@ -1,4 +1,5 @@
 import { User } from "../models/user_model.js";
+import { sendEmail } from "../utils/mailing.js";
 import { loginValidator, userValidator } from "../validators/validator.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -26,6 +27,14 @@ export const registerUser = async (req, res) => {
       email: value.email,
       password: hashedPassword,
     });
+
+    const sendWelcomeEmail = await sendEmail(
+      newUser.email,
+      "Welcome to Notes",
+      `Hello ${newUser.userName}, You are welcome`
+    );
+
+    console.log(sendWelcomeEmail);
 
     return res.status(201).json({
       message: "user created successfully",
